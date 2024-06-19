@@ -1,9 +1,11 @@
 package com.ren_backend.ren_backend;
 
+import java.io.File;
+import java.util.List;
+import java.util.stream.Stream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,14 +20,19 @@ public class UploadController {
     public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
 
     // TODO: make this work
-    /**
-     * UNIMPLEMENTED
-     * 
-     * @return ResponseEntity<Byte[]>
-     */
-    @GetMapping("/standard_patterns")
-    public ResponseEntity<Byte[]> getStandardPatterns() {
-        return ResponseEntity.internalServerError().build();
+    @GetMapping("/list_presets")
+    public ResponseEntity<List<String>> getStandardPatterns() throws IOException {
+        String directory_name = System.getProperty("user.dir") + "/src/main/resources/static/presets";
+        System.out.println(directory_name);
+        File dir = new File(directory_name);
+        File[] files = dir.listFiles();
+        List<String> filenames = Stream.of(files).map((file) -> file.getName()).toList();
+
+        for (var file : filenames) {
+            System.out.println(file);
+        }
+
+        return ResponseEntity.ok(filenames);
     }
 
     @PostMapping("/upload")
