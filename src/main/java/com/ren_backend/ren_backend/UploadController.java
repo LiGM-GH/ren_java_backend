@@ -18,7 +18,7 @@ public class UploadController {
 
     // TODO: make this better: this should not overwrite existing files and also should validate files (somehow)
     @PostMapping("/upload")
-    public ResponseEntity uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
+    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
         StringBuilder fileNames = new StringBuilder();
         Path fileNameAndPath = Paths.get(UPLOAD_DIRECTORY, file.getOriginalFilename());
         fileNames.append(file.getOriginalFilename());
