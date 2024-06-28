@@ -32,3 +32,7 @@ build/
 ### VS Code ###
 .vscode/
 uploads
+nsfw_lib/.env
+nsfw_lib/com_ren_backend_ren_backend_NsfwPredictor.h
+nsfw_lib/log/requests.log
+nsfw_lib/README.md

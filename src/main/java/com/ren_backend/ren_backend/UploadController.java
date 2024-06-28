@@ -19,7 +19,6 @@ public class UploadController {
 
     public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
 
-    // TODO: make this work
     @GetMapping("/list_presets")
     public ResponseEntity<List<String>> getStandardPatterns() throws IOException {
         String directory_name = System.getProperty("user.dir") + "/src/main/resources/static/presets";
@@ -36,7 +35,9 @@ public class UploadController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile file) throws IOException {
+    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile file, @RequestParam("x") int x,
+            @RequestParam("y") int y, @RequestParam("width") int width, @RequestParam("height") int height)
+            throws IOException {
         String contentType = file.getContentType();
 
         if (contentType == null || !contentType.contains("image/")) {
@@ -54,6 +55,10 @@ public class UploadController {
                     + " as " + filename);
 
             Files.write(filename, file.getBytes());
+
+            System.out.println("Trying to identify NSFW");
+            String result = NsfwPredictor.predict(filename.toString());
+            System.out.println("Trying to identify NSFW: " + result);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
