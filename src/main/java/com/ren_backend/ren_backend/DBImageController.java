@@ -9,12 +9,15 @@ public class DBImageController {
     Connection conn;
     String tableName;
 
-    public DBImageController() throws SQLException {
+    public DBImageController() throws SQLException, IllegalArgumentException {
         String jdbcUrl = "jdbc:" + System.getenv("IMAGE_DB_URL");
         String username = System.getenv("IMAGE_DB_USERNAME");
         String password = System.getenv("IMAGE_DB_PASSWORD");
 
         tableName = System.getenv("IMAGE_DB_TABLENAME");
+        if (tableName == null || tableName.trim().isEmpty()) {
+            throw new IllegalArgumentException("Table name not specified");
+        }
 
         conn = DriverManager.getConnection(jdbcUrl, username, password);
         System.out.println("Successfully connected to database " + conn);

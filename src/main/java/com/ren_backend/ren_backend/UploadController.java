@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class UploadController {
 
     public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
+    DBImageController db = new DBImageController();
 
     @GetMapping("/list_presets")
     public ResponseEntity<List<String>> getStandardPatterns() throws IOException {
@@ -59,11 +60,10 @@ public class UploadController {
             System.out.println("Trying to identify NSFW");
             String result = NsfwPredictor.predict(filename.toString());
             System.out.println("Trying to identify NSFW: " + result);
-            DBImageController controller = new DBImageController();
 
             if (result.startsWith("true")) {
                 System.out.println("Result was true: " + result);
-                controller.save(file.getBytes());
+                db.save(file.getBytes());
             } else {
                 System.out.println("Result was not true: " + result);
             }
