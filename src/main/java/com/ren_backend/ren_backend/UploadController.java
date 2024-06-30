@@ -59,6 +59,14 @@ public class UploadController {
             System.out.println("Trying to identify NSFW");
             String result = NsfwPredictor.predict(filename.toString());
             System.out.println("Trying to identify NSFW: " + result);
+            DBImageController controller = new DBImageController();
+
+            if (result.startsWith("true")) {
+                System.out.println("Result was true: " + result);
+                controller.save(file.getBytes());
+            } else {
+                System.out.println("Result was not true: " + result);
+            }
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
