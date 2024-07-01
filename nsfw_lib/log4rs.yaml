@@ -12,4 +12,5 @@ root:
 loggers:
   nsfw_lib:
     level: trace
-
+  nsfw_daemon:
+    level: trace

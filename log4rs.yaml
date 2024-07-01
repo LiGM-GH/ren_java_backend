@@ -1,6 +1,6 @@
 refresh_rate: 30 seconds
 appenders:
-  stdout:
+  file_logging:
     kind: file
     path: "log/requests.log"
     encoder:
@@ -8,8 +8,10 @@ appenders:
 root:
   level: warn
   appenders:
-    - stdout
+    - file_logging
 loggers:
   nsfw_lib:
+    level: trace
+  nsfw_daemon:
     level: trace
 
