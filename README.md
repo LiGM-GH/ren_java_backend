@@ -9,8 +9,16 @@ This is backend for a card designer.
 
 
 # How to run?
-Fill the needed env variables in `.env` and then `just run`
-
+Fill the needed env variables in `.env`:
+```bash
+NSFW_DAEMON_TCP_PORT="daemon_port_probably_on_localhost"
+NSFW_DAEMON_TCP_HOST="probably_localhost"
+IMAGE_DB_URL="postgresql://some_host:some_port/dbname"
+IMAGE_DB_USERNAME="some_username"
+IMAGE_DB_PASSWORD="some_password"
+IMAGE_DB_TABLENAME="probably_images"
+```
+and then `just run`
 
 # Where to curl?
 You can find the actual port in `./src/main/resources/application.properties`, property `server.port`
