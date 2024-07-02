@@ -2,15 +2,17 @@ package com.ren_backend.ren_backend;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+
+import java.sql.SQLException;
+
 import java.util.List;
 import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.sql.SQLException;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,64 +23,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-class CropData {
-    int x;
-    int y;
-    int width;
-    int height;
-    String unit;
-
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    public String getUnit() {
-        return unit;
-    }
-
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
-
-    @Override
-    public String toString() {
-        return "CropData {\n\tx: " + this.x + ",\n\ty: " + this.y + ",\n\twidth: " + this.width + ",\n\theight: "
-                + this.height + ",\n\tunit: " + this.unit + "\n}";
-    }
-}
-
 @RestController
 public class UploadController {
-
-    public static String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
+    public static final String UPLOAD_DIRECTORY = System.getProperty("user.dir") + "/uploads";
     DBImageController db;
 
     public UploadController() throws IllegalArgumentException, SQLException {
@@ -132,11 +79,12 @@ public class UploadController {
 
             ImageIO.write(bufferedImage, contentType, filename.toFile());
 
-            System.out.println("Trying to identify NSFW");
+            System.out.println("Trying to find out if the image isSafeForWork");
             String result = NsfwPredictor.predict(filename.toString());
-            System.out.println("Trying to identify NSFW: " + result);
+            System.out.println("Trying to find out if the image isSafeForWork: " + result);
 
-            if (result.startsWith("true")) {
+            Boolean isSafeForWork = Boolean.valueOf(result.stripTrailing());
+            if (isSafeForWork) {
                 System.out.println("Result was true: " + result);
                 db.save(imageFile.getBytes());
             } else {
@@ -149,5 +97,59 @@ public class UploadController {
         }
 
         return ResponseEntity.ok("OK");
+    }
+}
+
+class CropData {
+    int x;
+    int y;
+    int width;
+    int height;
+    String unit;
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    @Override
+    public String toString() {
+        return "CropData {\n\tx: " + this.x + ",\n\ty: " + this.y + ",\n\twidth: " + this.width + ",\n\theight: "
+                + this.height + ",\n\tunit: " + this.unit + "\n}";
     }
 }

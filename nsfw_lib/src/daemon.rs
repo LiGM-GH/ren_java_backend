@@ -74,7 +74,7 @@ fn main() {
         };
         log::trace!("Classif");
 
-        write!(stream, "{:-<10}", estimate(&results)).ok();
+        write!(stream, "{:<10}", estimate(&results)).ok();
     }
 }
 

@@ -38,3 +38,5 @@ nsfw_lib/log/requests.log
 nsfw_lib/README.md
 .env
 log/requests.log
+bin
+lib
