@@ -47,14 +47,14 @@ public class UploadController {
         return ResponseEntity.ok(filenames);
     }
 
-    @PostMapping("/upload")
+    @PostMapping("/register-design")
     public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile imageFile,
-            @RequestParam("CropData") String cropDataString)
+            @RequestParam("json") String requestJsonString)
             throws IOException {
-        System.out.println("CropData: " + cropDataString);
+        System.out.println("CropData: " + requestJsonString);
         ObjectMapper mapper = new ObjectMapper();
-        CropData cropData = mapper.readValue(cropDataString, CropData.class);
-        System.out.println("CropData: " + cropData.toString());
+        RequestJson requestJson = mapper.readValue(requestJsonString, RequestJson.class);
+        System.out.println("RequestJson: " + requestJson.toString());
 
         String contentType = imageFile.getContentType();
 
@@ -74,8 +74,9 @@ public class UploadController {
 
             BufferedImage bufferedImage = ImageIO.read(imageFile.getInputStream());
 
-            bufferedImage = bufferedImage.getSubimage(cropData.getX(), cropData.getY(), cropData.getWidth(),
-                    cropData.getHeight());
+            bufferedImage = bufferedImage.getSubimage(requestJson.getCropData().getX(),
+                    requestJson.getCropData().getY(), requestJson.getCropData().getWidth(),
+                    requestJson.getCropData().getHeight());
 
             ImageIO.write(bufferedImage, contentType, filename.toFile());
 
@@ -89,6 +90,7 @@ public class UploadController {
                 db.save(imageFile.getBytes());
             } else {
                 System.out.println("Result was not true: " + result);
+                return ResponseEntity.status(400).build();
             }
         } catch (Exception e) {
             System.out.println("Exception happened! ");
@@ -97,59 +99,5 @@ public class UploadController {
         }
 
         return ResponseEntity.ok("OK");
-    }
-}
-
-class CropData {
-    int x;
-    int y;
-    int width;
-    int height;
-    String unit;
-
-    public int getX() {
-        return x;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    public String getUnit() {
-        return unit;
-    }
-
-    public void setUnit(String unit) {
-        this.unit = unit;
-    }
-
-    @Override
-    public String toString() {
-        return "CropData {\n\tx: " + this.x + ",\n\ty: " + this.y + ",\n\twidth: " + this.width + ",\n\theight: "
-                + this.height + ",\n\tunit: " + this.unit + "\n}";
     }
 }
