@@ -4,7 +4,7 @@ class RequestJson {
     MirColors mirColors;
     CropData cropData;
     LogoColors logoColors;
-    String logoMinimization;
+    boolean logoMinimization;
     String logoSide;
 
     public MirColors getMirColors() {
@@ -31,11 +31,11 @@ class RequestJson {
         this.logoColors = logoColors;
     }
 
-    public String getLogoMinimization() {
+    public boolean getLogoMinimization() {
         return logoMinimization;
     }
 
-    public void setLogoMinimization(String logoMinimization) {
+    public void setLogoMinimization(boolean logoMinimization) {
         this.logoMinimization = logoMinimization;
     }
 
@@ -124,7 +124,7 @@ class LogoColors {
     }
 
     public String getText() {
-        return text;
+        return text == "none" ? null : text;
     }
 
     public void setText(String text) {
