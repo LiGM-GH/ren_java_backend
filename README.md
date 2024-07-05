@@ -5,7 +5,7 @@ This is backend for a card designer.
 # API
 - presets list available at `/list_presets`
 - presets themselves available at `/presets`
-- Upload images at `/register-design` with body of form-data with image: image and CropData: { "x": int, "y": int, "width": int, "height": int, "unit": String }
+- Upload images at `/register-design` with body of form-data with image: image and RequestJson as described in `src/......./ren_backend/RequestJson.java`
 
 
 # How to run?
