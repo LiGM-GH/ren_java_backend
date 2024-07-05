@@ -36,3 +36,17 @@ nsfw_lib/.env
 nsfw_lib/com_ren_backend_ren_backend_NsfwPredictor.h
 nsfw_lib/log/requests.log
 nsfw_lib/README.md
+.env
+log/requests.log
+bin
+lib
+ren_icon.png
+ren_icon_nobackground.png
+assets
+bank-letter.svg
+bank-logo.png
+bank-logo.svg
+bank-minilogo.svg
+bank-name.svg
+mir-logo-mono.svg
+mir-logo.svg

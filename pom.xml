@@ -40,6 +40,18 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.postgresql/postgresql -->
+		<dependency>
+		    <groupId>org.postgresql</groupId>
+		    <artifactId>postgresql</artifactId>
+		    <version>42.2.9</version>
+		</dependency>
+
+		<dependency>
+    	    <groupId>org.apache.xmlgraphics</groupId>
+    	    <artifactId>batik-codec</artifactId>
+    	    <version>1.14</version>
+    	</dependency>
 	</dependencies>
 
 	<build>

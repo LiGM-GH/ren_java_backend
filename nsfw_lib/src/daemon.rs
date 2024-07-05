@@ -4,17 +4,24 @@ use nsfw::{model::Classification, Model};
 use shellexpand::tilde;
 
 fn main() {
+    if log4rs::init_file("log4rs.yaml", Default::default()).is_err() {
+        eprintln!("Log4rs initialization failed");
+    }
+
     let Some(model) = load_model() else {
-        eprintln!("Couldn't load model!");
+        log::error!("Couldn't load model");
+        eprintln!("Couldn't load model! Provide model.onnx");
         return;
     };
 
     let Ok(host) = std::env::var("NSFW_DAEMON_TCP_HOST") else {
+        log::error!("Couldn't get NSFW_DAEMON_TCP_HOST");
         eprintln!("Provide NSFW_DAEMON_TCP_HOST - a valid host for the daemon to bind");
         return;
     };
 
     let Ok(port) = std::env::var("NSFW_DAEMON_TCP_PORT") else {
+        log::error!("Couldn't get NSFW_DAEMON_TCP_PORT");
         eprintln!("Provide NSFW_DAEMON_TCP_PORT - a valid port for the daemon to bind");
         return;
     };
@@ -23,46 +30,51 @@ fn main() {
 
     loop {
         let Ok(listener) = TcpListener::bind(&ip) else {
+            log::error!("Couldn't bind to provided NSFW_DAEMON_TCP_PORT");
             eprintln!("Couldn't bind to provided NSFW_DAEMON_TCP_PORT");
             return;
         };
 
         let Ok((mut stream, _addr)): Result<(std::net::TcpStream, std::net::SocketAddr), std::io::Error> = listener.accept() else {
+            log::error!("Couldn't get client.");
             eprintln!("Couldn't get client.");
             return;
         };
-        eprintln!("Got client.");
+        log::trace!("Got client.");
 
         let mut buf = Vec::with_capacity(128);
 
         let Ok(_size) = stream.read_to_end(&mut buf) else {
+            log::error!("NonUtfChar");
             eprintln!("NonUtfChar");
             write!(stream, "NonUtfChar").ok();
             continue
         };
-        eprintln!("Utf chars");
+        log::trace!("Utf chars");
 
         let Ok(buf) = String::from_utf8(buf) else {
+            log::error!("NonUtfChar");
             eprintln!("NonUtfChar");
             write!(stream, "NonUtfChar").ok();
             continue
         };
-        eprintln!("Utf chars: {}", buf);
+        log::trace!("Utf chars: {}", buf);
 
         let Ok(image) = open_image(&buf) else {
+            log::error!("NotAnImage: {}", buf);
             eprintln!("NotAnImage: {}", buf);
             write!(stream, "NotAnImage").ok();
             continue
         };
-        eprintln!("Image");
+        log::trace!("Image");
 
         let Ok(results) = nsfw::examine(&model, &image) else {
             write!(stream, "NotClassif").ok();
             continue
         };
-        eprintln!("Classif");
+        log::trace!("Classif");
 
-        write!(stream, "{:-<10}", estimate(&results)).ok();
+        write!(stream, "{:<10}", estimate(&results)).ok();
     }
 }
 
@@ -90,11 +102,13 @@ fn open_image(filename: &str) -> Result<image::RgbaImage, std::io::Error> {
 fn load_model() -> Option<Model> {
     let Ok(modelfile) = File::open("model.onnx") else {
         log::error!("Couldn't File::open(\"model.onnx\")");
+        eprintln!("Couldn't File::open(\"model.onnx\")");
         return None;
     };
 
     let Ok(model) = nsfw::create_model(modelfile) else {
         log::error!("Couldn't nsfw::create_model(modelfile)");
+        eprintln!("Couldn't nsfw::create_model(modelfile)");
         return None;
     };
 
@@ -105,6 +119,7 @@ fn load_model() -> Option<Model> {
 fn classif(model: &Model, image: &image::RgbaImage) -> Option<Vec<Classification>> {
     let Ok(classifications) = nsfw::examine(model, image) else {
         log::error!("Couldn't nsfw::examine(model, image)");
+        eprintln!("Couldn't nsfw::examine(model, image)");
         return None;
     };
 
